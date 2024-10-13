@@ -16,7 +16,7 @@
     
     <script>
         // FlaskサーバーのIPアドレスに置き換え
-        const socket = io('https://your-flask-server.com'); // HTTPS対応
+        const socket = io('https://35.200.15.158:8000'); // HTTPS対応
 
         function uploadFiles() {
             const files = document.getElementById('fileInput').files;
@@ -29,7 +29,7 @@
                 const formData = new FormData();
                 formData.append('file', file);
 
-                fetch('https://your-flask-server.com/upload', {  // Flaskのアップロード先を指定
+                fetch('https://35.200.15.158:8000/upload', {  // Flaskのアップロード先を指定
                     method: 'POST',
                     body: formData,
                 })
