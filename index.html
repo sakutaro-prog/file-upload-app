@@ -3,12 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css"> <!-- CSSファイルのリンク -->
-    <title>My Web App</title>
+    <title>File Upload</title>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <h1>ウェブアプリケーション</h1>
-    <button id="uploadButton">ファイルをアップロード</button>
-    <script src="script.js"></script> <!-- JavaScriptファイルのリンク -->
+    <h1>ファイルアップロード</h1>
+    <input type="file" id="fileInput" multiple>
+    <button onclick="uploadFiles()">アップロード</button>
+    
+    <p id="uploadStatus"></p>
+    <pre id="progress"></pre>
+    
+    <script>
+        // FlaskサーバーのIPアドレスに置き換え
+        const socket = io('https://your-flask-server.com'); // HTTPS対応
+
+        function uploadFiles() {
+            const files = document.getElementById('fileInput').files;
+            const uploadStatus = document.getElementById('uploadStatus');
+            const progress = document.getElementById('progress');
+            uploadStatus.textContent = 'アップロード中...';
+            progress.textContent = '';
+
+            Array.from(files).forEach(file => {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                fetch('https://your-flask-server.com/upload', {  // Flaskのアップロード先を指定
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.message) {
+                        progress.textContent += `${file.name} がアップロードされました。\n`;
+                    } else if (data.error) {
+                        progress.textContent += `エラー: ${data.error}\n`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
