@@ -4,49 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
+    <link rel="stylesheet" href="style.css"> <!-- style.cssを参照 -->
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <h1>ファイルアップロード</h1>
-    <input type="file" id="fileInput" multiple>
-    <button onclick="uploadFiles()">アップロード</button>
+    <div class="title-container">
+    <h3 class="colored-title">サーバーの番付登録</h3>
+    </div>
+    <div id="spinner"></div>
+    <div class="form-container">
+        <div class="form-item no-margin-bottom">
+            <label for="userInput1"></label>
+            <input type="text" id="userInput1" name="userInput1" class="input-underline" placeholder="サーバーを入力">
+            <div class="button-group">
+            <label for="fileInput" class="custom-file-upload">ファイルを選択</label>
+            <input type="file" id="fileInput" multiple style="display: none;" onchange="displaySelectedFileName()">
+            <button type="button" id="registButton" class="button-flat disabled" disabled onclick="uploadFiles()">登録</button>
+            </div>
+        </div>
+        <div class="file-name-container">
+            <p id="fileName">ファイル未選択です</p>
+        </div>
+        <!-- 進行状況を表示する要素 -->
+        <div id="uploadStatus"></div>
+        <div id="progress"></div>           
+    </div>
+    <button class="button-flat" onclick="window.location.href='https://script.google.com/macros/s/AKfycbwBoI75aGfrgAZjFknpp1kIOvJBZYNoGScHvMeu6jhrm6kRscmvXnjCeavB1JsGdfz0Fw/exec';">閉じる</button>
     
-    <p id="uploadStatus"></p>
-    <pre id="progress"></pre>
-    
-    <script>
-        // FlaskサーバーのIPアドレスに置き換え
-        const socket = io('https://35.200.15.158:8000'); // HTTPS対応
-
-        function uploadFiles() {
-            const files = document.getElementById('fileInput').files;
-            const uploadStatus = document.getElementById('uploadStatus');
-            const progress = document.getElementById('progress');
-            uploadStatus.textContent = 'アップロード中...';
-            progress.textContent = '';
-
-            Array.from(files).forEach(file => {
-                const formData = new FormData();
-                formData.append('file', file);
-
-                fetch('https://35.200.15.158:8000/upload', {  // Flaskのアップロード先を指定
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    if (data.message) {
-                        progress.textContent += `${file.name} がアップロードされました。\n`;
-                    } else if (data.error) {
-                        progress.textContent += `エラー: ${data.error}\n`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            });
-        }
-    </script>
+    <!-- script.jsの読み込み -->
+    <script src="script.js"></script>
 </body>
 </html>

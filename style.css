@@ -1,23 +1,283 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+/* リセットCSS */
+* {
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+:root {
+    --scale-factor: 1.2;
+    --primary-color: #333;
+    --secondary-color: white;
+    --background-color: #f4f4f4;
+    --text-color: #000;
+    --underline-color:#151B8D;
+    --headline-color: #000;
+    --button-color: black;
+    --button-hover-color: #848482;
+    --secondary-hover-color: lightgray; /* ホバー時のテキスト色 */          
+}
+
+body {
+    zoom: 1.2; /* ページ全体を120%に拡大 */
+    font-family: 'Noto Sans JP', 'M PLUS 1p', 'Sawarabi Gothic', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    width: 50%; /* 親要素の幅を100%に設定 */
+    min-height: 100vh; /* ビューポートの高さを確保 */
+    font-size: calc(1em * var(--scale-factor)); /* フォントサイズを拡大 */
+    margin-top: 20px; /* トップのマージン（値は調整可能） */
+    margin-left: 30px; /* 左側のマージン（値は調整可能） */
+}
+
+/* 見出しのスタイル */
 h1 {
-    color: #333;
+    font-family: 'Georgia', serif;
+    font-size: 30pt;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+h3 {
+    font-family: 'Georgia', serif;
+    font-size: 16pt;
+    color: #444;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.colored-title {
+    font-family: 'Georgia', serif;
+    color: #444;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    margin-bottom: 30px;
+    padding-left: 20px; /* カラーバーの分だけ余白を追加 */
+  }
+.colored-title::before {
+  content: '';
+  display: block;
+  width: 7px; /* カラーバーの幅 */
+  height: 100%;
+  background-color: var(--headline-color); /* カラーバーの色 */
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.colored-title::after {
+  content: '';
+  display: block;
+  width: 55%;
+  height: 2px; /* 下線の高さ */
+  background-color: var(--headline-color); /* 下線の色 */
+  position: absolute;
+  left: 0;
+  bottom: -5px; /* タイトルとの間隔 */
+}
+.title-container {
+  position: relative;
 }
 
-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.form-container {
+  width: 100%; /* 幅を100%に設定 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 左揃え */
+  margin-bottom: 10x; /* 必要に応じて調整 */
 }
 
-button:hover {
-    background-color: #0056b3;
+.no-margin-bottom {
+  margin-bottom: 0px; /* 特定の要素にだけ適用 */
+}
+
+.button-group {
+  display: flex;
+  align-items: center; /* 垂直方向の中央揃え */
+  margin-top: 10px; /* 必要に応じて調整 */
+  margin-bottom: 0px; /* 必要に応じて調整 */
+}
+
+.file-name-container {
+  font-size: 14px;
+  color: #bbb;
+  margin-left: 250px; /* 必要に応じて調整 */
+  margin-top: 0px; /* 必要に応じて調整 */
+  height: 100px;        
+}
+
+#fileName {
+  clear: both; /* フロートの影響を受けない */
+  margin-bottom: 10px; /* 必要に応じて調整 */
+  color: #333;
+  width: 350px; /* 幅を350pxに固定 */
+  height: 70px;
+  font-size: 10px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: row; /* 横方向に並べる */
+  align-items: center; /* 中央揃え */
+  margin-bottom: 20px; /* 各フォームアイテムの間に余白を追加 */
+  width: 100%; /* 幅を100%に設定 */
+}
+
+.form-item.no-margin-bottom {
+  margin-bottom: 0px; /* 各フォームアイテムの間に余白を追加 */
+}
+
+.input-underline {
+  appearance: none; /* デフォルトのスタイルを無効化 */
+  -webkit-appearance: none; /* Safari用 */
+  -moz-appearance: none; /* Firefox用 */
+  border: none;
+  border-bottom: 2px solid var(--underline-color); /* 下線を追加 */
+  padding: 15px 0;
+  width: 35%; /* 必要に応じて調整 */
+  box-sizing: border-box; /* パディングを含めてサイズを計算 */
+  background: transparent;
+  font-size: 16px;
+  color: #333;
+  border-radius: 0; /* 角丸を無効化 */
+  padding-bottom: 5px; /* 相殺を防ぐために1pxのパディングを追加 */
+  margin-right: 20px; /* 入力ボックスとボタンの間にスペースを追加 */
+  margin-left: 45px; /* 入力ボックスとボタンの間にスペースを追加 */
+}
+
+.input-underline:focus {
+  outline: none !important;
+  outline: none; /* フォーカス時のアウトラインを非表示 */
+  border-bottom: 2px solid #0000A0; /* フォーカス時の下線の色を変更 */
+}
+
+.custom-file-upload {
+  display: inline-block;
+  margin-right: 10px; /* ボタン間のスペースを調整 */
+  padding: 5px 20px;
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  height: 32px; /* ボタンの高さを設定 */
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 0px; /* 必要に応じて調整 */
+  line-height: normal; /* ラインハイトをリセット */
+  margin-left: auto; /* 左側の余白を自動設定して右寄せ */
+  vertical-align: middle; /* 縦位置を中央に揃える */
+}
+
+.custom-file-upload:hover {
+  background-color: var(--button-hover-color); /* ホバー時の背景色 */
+  color: var(--secondary-hover-color); /* ホバー時のテキスト色 */
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row; /* 要素を横に並べる */
+  justify-content: flex-end; /* ボタンを右寄せ */
+  align-items: center; /* 縦位置を中央に揃える */
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.button-flat {
+  background-color: var(--button-color); /* ボタンの背景色 */
+  color: white; /* ボタンの文字色 */
+  border: none; /* ボーダーを削除 */
+  padding: 5px 20px;
+  cursor: pointer;
+  border-radius: 5px; /* 角を丸くする */
+  font-size: 14px;
+  margin: 10px; /* ボタン間の余白を追加 */
+  height: 32px; /* ボタンの高さを設定 */
+  line-height: normal; /* ラインハイトをリセット */
+  margin-left: auto; /* 左側の余白を自動設定して右寄せ */
+  vertical-align: middle; /* 縦位置を中央に揃える */
+}
+
+.button-flat:hover {
+  background-color: var(--button-hover-color); /* ホバー時の背景色 */
+  color: var(--secondary-hover-color); /* ホバー時のテキスト色 */
+}
+
+.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  color: #666; /* ボタンのテキスト色も変更 */
+  margin-top: 10px; /* 必要に応じて調整 */
+}
+
+/* リスト作成のステータスメッセージ */
+.center-align {
+    text-align: center;
+}
+
+.inline-block {
+    display: inline-block;
+    vertical-align: middle; /* 要素を中央揃え */
+    margin-right: 60px; /* 必要に応じて調整 */
+}
+
+.label-width {
+    width: 200px; /* 必要に応じて調整 */
+    text-align: leet; /* テキストを右揃え */
+    padding-right: 0px; /* 必要に応じて調整 */
+}
+
+#statusMessage-list {
+    margin-top: 10px; /* 必要に応じて調整 */
+    font-size: 14px; /* お好みのサイズに変更してください */
+}
+.defaultMessage {
+    font-size: 14px;
+    color: black;
+}
+.loadingMessage {
+    font-size: 14px;
+    color: #bbb; /* 処理中の色を設定 */
+}
+.successMessage {
+    font-size: 14px;
+    color: black; /* 成功メッセージの色を設定 */
+}
+.errorMessage {
+    font-size: 14px;
+    color: red; /* エラーメッセージの色を設定 */
+}
+
+.large-text {
+    font-size: 20px; /* 大きなフォントサイズ */
+}
+.small-text {
+    font-size: 12px; /* 小さなフォントサイズ */
+}
+
+.status-container
+{
+    display: flex;
+}
+.status-item {
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ccc;
+}
+
+/* スピナーのスタイル */
+#spinner {
+    display: none;
+    margin: 20px auto;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
