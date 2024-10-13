@@ -1,44 +1,25 @@
-document.getElementById('uploadButton').addEventListener('click', function() {
-    // フラスクサーバーにファイルをアップロードするための処理を書く
-    alert('ファイルをアップロードする処理をここに書きます。');
-});
+const userInput1 = document.getElementById('userInput1');
+const fileInput = document.getElementById('fileInput');
+const registButton = document.getElementById('registButton');
 
-// FlaskサーバーのIPアドレスに置き換え
-const socket = io('https://35.200.15.158:8000'); // HTTPS対応
+let fileNames = []; // グローバル変数宣言
 
-function uploadFiles() {
-    const files = document.getElementById('fileInput').files;
-    const uploadStatus = document.getElementById('uploadStatus');
-    const progress = document.getElementById('progress');
-    uploadStatus.textContent = 'アップロード中...';
-    progress.textContent = '';
-
-    Array.from(files).forEach(file => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        fetch('https://35.200.15.158:8000/upload', {  // Flaskのアップロード先を指定
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if (data.message) {
-                progress.textContent += `${file.name} がアップロードされました。\n`;
-            } else if (data.error) {
-                progress.textContent += `エラー: ${data.error}\n`;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    });
+// 入力があるかどうかをチェックする関数
+function updateRegistButtonState() {
+    if (userInput1.value.trim() !== '' && fileNames.length > 0) {
+        registButton.disabled = false; // ボタンを有効化
+        registButton.classList.remove('disabled');
+    } else {
+        registButton.disabled = true; // ボタンを無効化
+        registButton.classList.add('disabled');
+    }
 }
 
+// ユーザー入力があるかどうかをチェックするイベントリスナー
+userInput1.addEventListener('input', updateRegistButtonState);
+
 // ファイル選択状態が更新されたときの処理
-var fileNames = []; // グローバル変数宣言
-document.getElementById('fileInput').addEventListener('change', function() {
+fileInput.addEventListener('change', function() {
     fileNames = []; // ここでリセット
     for (var i = 0; i < this.files.length; i++) {
         fileNames.push(this.files[i].name);
@@ -46,58 +27,60 @@ document.getElementById('fileInput').addEventListener('change', function() {
     var displayText = fileNames.length > 0 ? fileNames.join(', ') : 'ファイルが選択されていません';
     document.getElementById('fileName').textContent = displayText;
 
-    var userInput1 = document.getElementById('userInput1').value;
-    if ((fileNames.length > 0) && (userInput1 != '')) {
-        // 登録ボタンを有効化
-        registButton.disabled = false;
-        registButton.classList.remove('disabled');
-    } else {
-        // 登録ボタンを無効化
-        registButton.disabled = true;
-        registButton.classList.add('disabled');
-    }
-});
-
-// サーバー情報が更新されたときの処理
-document.getElementById('userInput1').addEventListener('input', function() {
+    // 登録ボタンの状態を更新
     updateRegistButtonState();
 });
 
-function updateRegistButtonState() {
-    var userInput1 = document.getElementById('userInput1').value;
-    var registButton = document.getElementById('registButton');
-    if ((fileNames.length > 0) && (userInput1 !== '')) {
-        // 登録ボタンを有効化
-        registButton.disabled = false;
-        registButton.classList.remove('disabled');
-    } else {
-        // 登録ボタンを無効化
-        registButton.disabled = true;
-        registButton.classList.add('disabled');
-    }
+// ファイルアップロード処理
+function uploadFiles() {
+    const files = fileInput.files;
+    const uploadStatus = document.getElementById('uploadStatus');
+    const progress = document.getElementById('progress');
+    uploadStatus.textContent = 'アップロード中...';
+    progress.textContent = '';
+
+    Array.from(files).forEach(file => {
+        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        if (!allowedTypes.includes(file.type)) {
+            alert(`${file.name} はサポートされていないファイルタイプです。`);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://35.200.15.158:8000/upload', true);
+
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                progress.textContent = `${file.name}: ${Math.round(percentComplete)}%`;
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                if (data.message) {
+                    progress.textContent += `${file.name} がアップロードされました。\n`;
+                } else if (data.error) {
+                    progress.textContent += `エラー: ${data.error}\n`;
+                }
+            } else {
+                progress.textContent += `エラー: ${xhr.statusText}\n`;
+            }
+        };
+
+        xhr.send(formData);
+    });
 }
 
-// 画像ファイルのアップロード成功
-function onSuccess(message) {
-    console.log('Success:', message);
-    alert(message);
-    document.getElementById('fileName').textContent = ''; // ファイル名表示をクリア
-    document.getElementById('uploadStatus').textContent = ''; // 進行状況メッセージをクリア
-    document.getElementById('userInput1').value = ''; // サーバー番号をクリア
-}
-
-// 画像ファイルのアップロード失敗
-function onFailure(error) {
-    console.error('Error:', error);
-    alert('ファイルのアップロードに失敗しました。');
-    document.getElementById('uploadStatus').textContent = ''; // 進行状況メッセージをクリア
-}
-
+// ファイル名を表示する関数
 function displaySelectedFileName() {
-    var fileInput = document.getElementById('fileInput');
-    var fileNameDisplay = document.getElementById('fileName');
+    const fileNameDisplay = document.getElementById('fileName');
     if (fileInput.files.length > 0) {
-        var fileNames = Array.from(fileInput.files).map(file => file.name).join(', ');
+        const fileNames = Array.from(fileInput.files).map(file => file.name).join(', ');
         fileNameDisplay.textContent = fileNames;
     } else {
         fileNameDisplay.textContent = 'ファイルが選択されていません';
